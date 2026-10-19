@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marcel Wölfli | Operations & Technical Product Leadership</title>
+    <!-- Google Fonts: Playfair Display (Editorial Serif), Inter (Clean Sans), JetBrains Mono (Tech Metadata) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-primary: #F4F6F9;
+            --bg-secondary: #EAECEF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --accent-blue: #0047FF;
+            --accent-blue-hover: #0035C4;
+            --border-color: #CBD5E1;
+            
+            --font-serif: 'Playfair Display', Georgia, serif;
+            --font-sans: 'Inter', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* --- TOP NAVIGATION / METADATA BAR --- */
+        header {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-left span {
+            margin-right: 2rem;
+        }
+
+        .header-tag {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--accent-blue);
+            letter-spacing: 0.08em;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            padding: 3rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.25fr 0.75fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .hero-title {
+            font-family: var(--font-serif);
+            font-size: clamp(2.25rem, 4vw, 3.5rem);
+            line-height: 1.08;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-title em {
+            font-style: italic;
+            font-weight: 400;
+            color: var(--accent-blue);
+        }
+
+        .hero-lead {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            max-width: 540px;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-blue);
+            color: #FFFFFF;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            text-decoration: none;
+            padding: 0.75rem 1.25rem;
+            border: 1px solid var(--accent-blue);
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-blue-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--text-main);
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            text-decoration: none;
+            padding: 0.75rem 1.25rem;
+            border: 1px solid var(--text-main);
+            transition: all 0.2s ease;
+        }
+
+        .btn-outline:hover {
+            background-color: var(--text-main);
+            color: #FFFFFF;
+        }
+
+        .cta-note {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            max-width: 220px;
+            line-height: 1.3;
+        }
+
+        .portrait-box {
+            position: relative;
+        }
+
+        .portrait-caption {
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        /* --- SECTION SCAFFOLDING --- */
+        section {
+            padding: 3.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-grid {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: 2.5rem;
+        }
+
+        .section-label {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            position: relative;
+            padding-top: 0.5rem;
+        }
+
+        .section-label::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 2px;
+            background-color: var(--accent-blue);
+        }
+
+        /* --- STICKY SCROLLING TIMELINE SECTION --- */
+        .sticky-scroll-container {
+            position: relative;
+            height: 280vh;
+        }
+
+        .sticky-wrapper {
+            position: sticky;
+            top: 3rem;
+            height: calc(100vh - 4rem);
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .trajectory-top {
+            margin-bottom: 1rem;
+        }
+
+        .impact-word-display {
+            font-family: var(--font-serif);
+            font-size: clamp(2.2rem, 4vw, 3.5rem);
+            line-height: 1.02;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.25rem;
+            transition: opacity 0.2s ease;
+        }
+
+        .impact-sub-meta {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent-blue);
+        }
+
+        .timeline-wrapper {
+            margin: 1.5rem 0 1.25rem;
+            position: relative;
+            padding: 1rem 0;
+        }
+
+        .timeline-wave-svg {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            transform: translateY(-50%);
+            z-index: 1;
+            overflow: visible;
+            pointer-events: none;
+        }
+
+        .wave-path-bg {
+            fill: none;
+            stroke: var(--border-color);
+            stroke-width: 2;
+            stroke-dasharray: 4 4;
+        }
+
+        .wave-path-fill {
+            fill: none;
+            stroke: var(--accent-blue);
+            stroke-width: 3;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+
+        .wave-boat {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 28px;
+            height: 28px;
+            transform: translate(-50%, -50%);
+            z-index: 4;
+            pointer-events: none;
+            transition: transform 0.05s linear;
+        }
+
+        .timeline-nodes-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 3;
+        }
+
+        .timeline-node {
+            position: relative;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .timeline-node:hover {
+            border-color: var(--accent-blue);
+            transform: scale(1.2);
+        }
+
+        .timeline-node.filled {
+            border-color: var(--accent-blue);
+            background-color: var(--accent-blue);
+        }
+
+        .timeline-node.active {
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--accent-blue);
+            background-color: #FFFFFF;
+            box-shadow: 0 0 0 5px rgba(0, 71, 255, 0.1);
+        }
+
+        .node-label {
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            white-space: nowrap;
+            color: var(--text-muted);
+            transition: color 0.2s ease;
+        }
+
+        .timeline-node.active .node-label,
+        .timeline-node.filled .node-label {
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        .story-detail-box {
+            max-width: 580px;
+            margin-top: 1rem;
+        }
+
+        .story-detail-title {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .story-detail-text {
+            color: var(--text-muted);
+            font-size: 0.92rem;
+        }
+
+        /* --- CAPABILITIES (TWO COLUMNS) --- */
+        .section-heading {
+            font-family: var(--font-serif);
+            font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+            line-height: 1.15;
+            margin-bottom: 0.5rem;
+            max-width: 640px;
+        }
+
+        .section-intro {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            max-width: 580px;
+            font-size: 0.95rem;
+        }
+
+        .capabilities-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+        }
+
+        .cap-col-title {
+            font-family: var(--font-serif);
+            font-size: 1.15rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .cap-col-sub {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent-blue);
+            margin-bottom: 1rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cap-item {
+            padding: 0.85rem 0;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+
+        .cap-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.2rem;
+        }
+
+        .cap-item-title {
+            font-weight: 600;
+            font-size: 0.92rem;
+        }
+
+        .cap-toggle {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--accent-blue);
+        }
+
+        .cap-item-summary {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .cap-item-details {
+            display: none;
+            margin-top: 0.6rem;
+            padding: 0.6rem 0.85rem;
+            background-color: var(--bg-secondary);
+            border-left: 2px solid var(--accent-blue);
+            font-size: 0.82rem;
+            color: var(--text-main);
+        }
+
+        .cap-item.open .cap-item-details {
+            display: block;
+        }
+
+        /* --- ESSENTIALS AT A GLANCE --- */
+        .essentials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.75rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+        }
+
+        .essential-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .essential-tag {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.4rem;
+        }
+
+        .essential-title {
+            font-family: var(--font-serif);
+            font-size: 1.2rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .essential-desc {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            margin-bottom: 0.85rem;
+        }
+
+        .essential-outcome {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            padding-top: 0.5rem;
+            border-top: 1px dashed var(--border-color);
+            color: var(--text-main);
+        }
+
+        /* --- FOUNDATION & NEW ADVISORY SECTION --- */
+        .project-list {
+            border-top: 1px solid var(--border-color);
+        }
+
+        .project-row {
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .project-meta {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent-blue);
+            margin-bottom: 0.25rem;
+        }
+
+        .project-title {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .project-desc {
+            color: var(--text-muted);
+            max-width: 640px;
+            font-size: 0.9rem;
+        }
+
+        /* --- FOOTER / CONTACT --- */
+        footer {
+            padding: 2.5rem 0;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        @media (max-width: 860px) {
+            .hero-grid,
+            .section-grid,
+            .capabilities-grid,
+            .essentials-grid {
+                grid-template-columns: 1fr;
+            }
+            .sticky-scroll-container {
+                height: auto;
+            }
+            .sticky-wrapper {
+                position: relative;
+                height: auto;
+                padding: 2rem 0;
+            }
+            .timeline-wave-svg, .wave-boat {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP BAR -->
+    <header>
+        <div class="container header-inner">
+            <div class="header-left">
+                <span>MARCEL WÖLFLI</span>
+                <span>UTZENSTORF, SWITZERLAND</span>
+            </div>
+            <div class="header-tag">
+                DIGITAL TRANSFORMATION &amp; OPERATIONS
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <div class="hero">
+        <div class="container hero-grid">
+            <div>
+                <h1 class="hero-title">
+                    Bridging physical operations and <em>digital scale.</em>
+                </h1>
+                <p class="hero-lead">
+                    I started with a wrench in my hand as an automotive mechanic and roadside patrol officer. Today, I steer mission-critical railway traffic management systems and international software teams—backed by over a decade of operational and technical product leadership.
+                </p>
+                <div class="cta-row">
+                    <a href="https://www.linkedin.com/in/marcel-wölfli-72202584" target="_blank" class="btn-primary">Connect on LinkedIn &rarr;</a>
+                    <span class="cta-note">Always open to exchanging ideas on mobility, operations, and digital transformation.</span>
+                </div>
+            </div>
+            <div class="portrait-box">
+                <img src="marcel.jpg" alt="Marcel Wölfli" style="width: 100%; aspect-ratio: 4/5; object-fit: cover; border: 1px solid var(--border-color);">
+                <div class="portrait-caption">
+                    <span>MARCEL WÖLFLI</span>
+                    <span>UTZENSTORF / SWITZERLAND</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STICKY SCROLLING TIMELINE SECTION (KOMPAKT) -->
+    <div class="sticky-scroll-container" id="trajectory-container">
+        <div class="sticky-wrapper">
+            <div class="container section-grid" style="width: 100%;">
+                <div class="section-label" id="timeline-era">2003 TO 2007</div>
+                <div>
+                    <div class="trajectory-top">
+                        <div class="impact-word-display" id="impact-word">Ground Truth.</div>
+                        <div class="impact-sub-meta" id="impact-meta">
+                            AUTOMOTIVE MECHANIC &amp; TECHNICAL PATROL OFFICER (GARAGE LÜTHI / TCS)
+                        </div>
+                    </div>
+
+                    <!-- Timeline mit SVG Welle & Boot -->
+                    <div class="timeline-wrapper">
+                        <svg class="timeline-wave-svg" viewBox="0 0 1000 50" preserveAspectRatio="none">
+                            <path class="wave-path-bg" id="wave-main-path" d="M 0,25 Q 250,5 500,25 T 1000,25"></path>
+                            <path class="wave-path-fill" id="wave-fill-path" d="M 0,25 Q 250,5 500,25 T 1000,25"></path>
+                        </svg>
+
+                        <!-- Das Boot exakt auf der Linie -->
+                        <div class="wave-boat" id="wave-boat">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0047FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.6 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path>
+                                <path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.38.74 4.6 2.02 6.4"></path>
+                                <path d="M12 10V4l3 3"></path>
+                                <path d="M12 4l-3 3"></path>
+                            </svg>
+                        </div>
+                        
+                        <div class="timeline-nodes-container">
+                            <div class="timeline-node active" id="node-0" onclick="scrollToStage(0)">
+                                <span class="node-label">Mechanics</span>
+                            </div>
+                            <div class="timeline-node" id="node-1" onclick="scrollToStage(1)">
+                                <span class="node-label">Logistics</span>
+                            </div>
+                            <div class="timeline-node" id="node-2" onclick="scrollToStage(2)">
+                                <span class="node-label">24/7 Operations</span>
+                            </div>
+                            <div class="timeline-node" id="node-3" onclick="scrollToStage(3)">
+                                <span class="node-label">Digital Product</span>
+                            </div>
+                            <div class="timeline-node" id="node-4" onclick="scrollToStage(4)">
+                                <span class="node-label">Critical Rail</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Story Text -->
+                    <div class="story-detail-box">
+                        <h3 class="story-detail-title" id="story-title">Diagnosing real machines under roadside pressure</h3>
+                        <p class="story-detail-text" id="story-text">
+                            My career started in the workshop as an automotive mechanic and out on the highway as a technical patrol officer at TCS. Performing live diagnostics and repairs directly with stranded motorists taught me how physical systems fail—and why pragmatic problem-solving matters more than theory.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CAPABILITIES SECTION -->
+    <section id="capabilities">
+        <div class="container section-grid">
+            <div class="section-label">CAPABILITIES</div>
+            <div>
+                <h2 class="section-heading">What I learned on the frontline, and how I steer digital products today</h2>
+                <p class="section-intro">
+                    Combining hands-on operational grit with advanced business information systems strategy. Select any capability below for details.
+                </p>
+
+                <div class="capabilities-grid">
+                    <div>
+                        <h3 class="cap-col-title">Technical Product &amp; Strategy</h3>
+                        <div class="cap-col-sub">DETAILS</div>
+
+                        <div class="cap-item" onclick="this.classList.toggle('open')">
+                            <div class="cap-item-header">
+                                <span class="cap-item-title">High-Availability Systems (4+ Platforms)</span>
+                                <span class="cap-toggle">Details +</span>
+                            </div>
+                            <div class="cap-item-summary">Product ownership for critical Traffic Management Systems (RCS/TMS) and high-traffic digital platforms.</div>
+                            <div class="cap-item-details">
+                                Steering product vision and release lifecycles under strict CENELEC railway safety standards at Swiss Federal Railways (SBB) as well as consumer-facing web and mobile ecosystems at TCS.
+                            </div>
+                        </div>
+
+                        <div class="cap-item" onclick="this.classList.toggle('open')">
+                            <div class="cap-item-header">
+                                <span class="cap-item-title">Global Nearshore &amp; Offshore Steering</span>
+                                <span class="cap-toggle">Details +</span>
+                            </div>
+                            <div class="cap-item-summary">Leading distributed engineering teams across Europe and Asia within Scaled Agile (SAFe).</div>
+                            <div class="cap-item-details">
+                                Proven ability to bridge cultural and technical distances—directing nearshore developers in Germany and Romania (SBB) and offshore mobile/web engineering teams in the Philippines (TCS).
+                            </div>
+                        </div>
+
+                        <div class="cap-item" onclick="this.classList.toggle('open')">
+                            <div class="cap-item-header">
+                                <span class="cap-item-title">Information Systems &amp; Software Craft</span>
+                                <span class="cap-toggle">Details +</span>
+                            </div>
+                            <div class="cap-item-summary">Grounded in Java, MySQL, Google Cloud, and Requirements Engineering.</div>
+                            <div class="cap-item-details">
+                                Backed by an AACSB-accredited Bachelor of Science in Business Information Systems and hands-on coding projects (Java/JavaFX), enabling eye-level architectural discussions with engineers.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="cap-col-title">Operations &amp; Executive Leadership</h3>
+                        <div class="cap-col-sub">DETAILS</div>
+
+                        <div class="cap-item" onclick="this.classList.toggle('open')">
+                            <div class="cap-item-header">
+                                <span class="cap-item-title">24/7 Shift Operations (Up to 35 Staff)</span>
+                                <span class="cap-toggle">Details +</span>
+                            </div>
+                            <div class="cap-item-summary">Full regional leadership, coaching, and operational readiness around the clock.</div>
+                            <div class="cap-item-details">
+                                Directed 24/7 roadside and regional operations across Northern Switzerland (Basel/Aargau), holding full budget responsibility and building new regional service offerings from the ground up.
+                            </div>
+                        </div>
+
+                        <div class="cap-item" onclick="this.classList.toggle('open')">
+                            <div class="cap-item-header">
+                                <span class="cap-item-title">10+ Years of Line &amp; Matrix Leadership</span>
+                                <span class="cap-toggle">Details +</span>
+                            </div>
+                            <div class="cap-item-summary">Over a decade of leading logistics, field patrol, and agile software organizations.</div>
+                            <div class="cap-item-details">
+                                Transitioned seamlessly from disciplinary leadership of mechanics and logistics specialists to lateral product leadership across complex enterprise stakeholder landscapes.
+                            </div>
+                        </div>
+
+                        <div class="cap-item" onclick="this.classList.toggle('open')">
+                            <div class="cap-item-header">
+                                <span class="cap-item-title">Executive &amp; Regulatory Alignment</span>
+                                <span class="cap-toggle">Details +</span>
+                            </div>
+                            <div class="cap-item-summary">Reporting to executive steering committees and partnering with authorities.</div>
+                            <div class="cap-item-details">
+                                Experienced in translating deep technical constraints into clear business decisions for C-level committees while maintaining strategic networks with regulatory bodies and external partners.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- IN SHORT -->
+    <section id="impact">
+        <div class="container section-grid">
+            <div class="section-label">IN SHORT</div>
+            <div>
+                <h2 class="section-heading">The essentials at a glance</h2>
+                <p class="section-intro">
+                    Three core themes define my work across physical infrastructure and digital transformation.
+                </p>
+
+                <div class="essentials-grid">
+                    <div class="essential-card">
+                        <div>
+                            <div class="essential-tag">MISSION-CRITICAL RELIABILITY</div>
+                            <h3 class="essential-title">Systems that keep a nation moving</h3>
+                            <p class="essential-desc">
+                                Whether managing national rail traffic disposition (RCS/TMS) or emergency roadside apps, I specialize in high-availability environments where software stability directly impacts real-world movement.
+                            </p>
+                        </div>
+                        <div class="essential-outcome">4+ HIGH-AVAILABILITY PLATFORMS</div>
+                    </div>
+
+                    <div class="essential-card">
+                        <div>
+                            <div class="essential-tag">OPERATIONAL CREDIBILITY</div>
+                            <h3 class="essential-title">Tested in 24/7 shift reality</h3>
+                            <p class="essential-desc">
+                                Having led up to 35 shift workers and logistics teams with full budget accountability, I design digital processes that actually work for the people on the ground—day and night.
+                            </p>
+                        </div>
+                        <div class="essential-outcome">10+ YEARS IN LEADERSHIP</div>
+                    </div>
+
+                    <div class="essential-card">
+                        <div>
+                            <div class="essential-tag">GLOBAL DELIVERY</div>
+                            <h3 class="essential-title">Distributed engineering at scale</h3>
+                            <p class="essential-desc">
+                                Steering cross-border development squads across Germany, Romania, and the Philippines using SAFe—turning complex requirements into reliable, standards-compliant releases.
+                            </p>
+                        </div>
+                        <div class="essential-outcome">SAFe &amp; CENELEC COMPLIANT</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ADVISORY & CULTURE -->
+    <section id="advisory">
+        <div class="container section-grid">
+            <div class="section-label">ADVISORY &amp; CULTURE</div>
+            <div>
+                <h2 class="section-heading">Leadership philosophy &amp; operational mindset</h2>
+                <p class="section-intro">
+                    Beyond code and infrastructure, sustainable success is built on psychological safety, cross-functional trust, and relentless customer focus.
+                </p>
+
+                <div class="project-list">
+                    <div class="project-row">
+                        <div class="project-meta">PSYCHOLOGICAL SAFETY &amp; MENTORSHIP</div>
+                        <h3 class="project-title">Empowering teams in high-stress environments</h3>
+                        <p class="project-desc">
+                            In 24/7 operations and mission-critical rail systems, blame cultures destroy performance. I foster environments where teams openly address bottlenecks, experiment safely, and take shared ownership of outcomes.
+                        </p>
+                    </div>
+
+                    <div class="project-row">
+                        <div class="project-meta">STRATEGIC ALIGNMENT</div>
+                        <h3 class="project-title">Translating floor reality into boardroom strategy</h3>
+                        <p class="project-desc">
+                            Having worked hands-on on the shop floor before managing multi-million budgets, I serve as an effective translator between engineers, operational staff, and executive stakeholders—ensuring strategic goals match physical constraints.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOUNDATION -->
+    <section id="foundation">
+        <div class="container section-grid">
+            <div class="section-label">FOUNDATION</div>
+            <div>
+                <h2 class="section-heading">Continuous evolution &amp; AI-driven building</h2>
+                <p class="section-intro">
+                    From a federal apprenticeship on the shop floor to executive master's studies and leveraging AI to build own products.
+                </p>
+
+                <div class="project-list">
+                    <div class="project-row">
+                        <div class="project-meta">EXECUTIVE EDUCATION &bull; FHNW SWITZERLAND</div>
+                        <h3 class="project-title">MAS in Digital Business Transformation &amp; BSc in Business Information Systems</h3>
+                        <p class="project-desc">
+                            Currently completing the Master of Advanced Studies (MAS) in Digital Business Transformation at FHNW, building upon an AACSB-accredited Bachelor of Science in Business Information Systems (2022)[cite: 8] and a Diploma in Business Administration.
+                        </p>
+                    </div>
+
+                    <div class="project-row">
+                        <div class="project-meta">AI-ASSISTED DEVELOPMENT &bull; JAVA &amp; CLOUD</div>
+                        <h3 class="project-title">Building Own Products with AI &amp; JavaFX</h3>
+                        <p class="project-desc">
+                            To stay sharp as a technical product leader, I love leveraging AI to build and code my own software products and custom JavaFX applications outside of work—working hands-on with Java, MySQL, Git, and Google Cloud Services.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section id="contact">
+        <div class="container section-grid">
+            <div class="section-label">CONTACT</div>
+            <div>
+                <h2 class="section-heading">Happy to talk</h2>
+                <p class="section-intro">
+                    Email or LinkedIn is fastest. Whether you want to exchange thoughts on scaled agile in critical infrastructure, digital transformation, or leadership across physical and digital operations—I am always glad to connect over a virtual coffee.
+                </p>
+                <div class="cta-row">
+                    <a href="mailto:marcel.woelfli@bluewin.ch" class="btn-primary">marcel.woelfli@bluewin.ch</a>
+                    <a href="https://www.linkedin.com/in/marcel-wölfli-72202584" target="_blank" class="btn-outline">LinkedIn Profile</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <footer>
+            <span>Marcel Wölfli &mdash; Utzenstorf, Switzerland</span>
+            <span>Operations &amp; Technical Product Leadership</span>
+        </footer>
+    </div>
+
+    <!-- STICKY SCROLLING & BOAT SCRIPT -->
+    <script>
+        const stages = [
+            {
+                era: "2003 TO 2007 / SHOP FLOOR & HIGHWAY",
+                word: "Ground Truth.",
+                meta: "CAR MECHANIC & TECHNICAL PATROL OFFICER (GARAGE LÜTHI / TCS)",
+                title: "Diagnosing real machines under roadside pressure",
+                text: "My career started in the workshop as an automotive mechanic and out on the highway as a technical patrol officer at TCS. Performing live diagnostics and repairs directly with stranded motorists taught me how physical systems fail—and why pragmatic problem-solving matters more than theory."
+            },
+            {
+                era: "2007 TO 2012 / LOGISTICS & FLEET",
+                word: "Backbone.",
+                meta: "LOGISTICS MANAGER & DEPUTY GROUP LEADER AT TCS (15 STAFF)",
+                title: "Stepping into leadership and supply chain precision",
+                text: "Took responsibility for a team of 15 employees, coordinating complex internal and external logistics, inventory, and fleet operations. Here I learned how to combine technical support with strict budget discipline and structured team leadership."
+            },
+            {
+                era: "2012 TO 2019 / REGIONAL 24/7 OPERATIONS",
+                word: "Relentless.",
+                meta: "AREA MANAGER NORTHERN SWITZERLAND AT TCS (UP TO 35 SHIFT WORKERS)",
+                title: "Full budget ownership and 24/7 operational leadership",
+                text: "Directed around-the-clock operations across the Basel and Aargau regions. Leading and coaching shift workers in a 24/7 environment—while establishing new regional service offerings and partnering with regulatory authorities—forged my leadership resilience."
+            },
+            {
+                era: "2019 TO 2022 / DIGITAL PRODUCT TRANSITION",
+                word: "Transformation.",
+                meta: "PRODUCT OWNER MOBILE & PRODUCT MANAGER WEB/MOBILE AT TCS",
+                title: "Taking field experience into global software delivery",
+                text: "Bridged my operational background with Business Information Systems. Spearheaded the product vision and full release lifecycle for critical web and mobile applications, steering offshore engineering teams in the Philippines and reporting to executive steering committees."
+            },
+            {
+                era: "SINCE 2022 / MISSION-CRITICAL RAIL",
+                word: "Zero Downtime.",
+                meta: "PRODUCT OWNER RCS/TMS DISPO AT SWISS FEDERAL RAILWAYS (SBB)",
+                title: "Steering high-availability traffic management at scale",
+                text: "Today, I lead the product vision and backlog for SBB's critical Traffic Management System (TMS). Directing nearshore development teams in Germany and Romania within SAFe and strict CENELEC railway safety standards, I ensure one of the world's busiest rail networks runs seamlessly."
+            }
+        ];
+
+        const container = document.getElementById('trajectory-container');
+        const waveFillPath = document.getElementById('wave-fill-path');
+        const waveMainPath = document.getElementById('wave-main-path');
+        const waveBoat = document.getElementById('wave-boat');
+        const totalLength = waveMainPath ? waveMainPath.getTotalLength() : 1000;
+
+        if (waveFillPath) {
+            waveFillPath.style.strokeDasharray = totalLength;
+            waveFillPath.style.strokeDashoffset = totalLength;
+        }
+        
+        window.addEventListener('scroll', () => {
+            const rect = container.getBoundingClientRect();
+            const containerHeight = container.offsetHeight - window.innerHeight;
+            const scrollProgress = -rect.top;
+
+            if (scrollProgress >= 0 && scrollProgress <= containerHeight) {
+                const progressRatio = scrollProgress / containerHeight;
+                
+                if (waveFillPath) {
+                    const drawLength = totalLength * (1 - progressRatio);
+                    waveFillPath.style.strokeDashoffset = drawLength;
+                }
+
+                if (waveMainPath && waveBoat) {
+                    const currentLength = totalLength * progressRatio;
+                    const point = waveMainPath.getPointAtLength(currentLength);
+                    
+                    const xPercent = (point.x / 1000) * 100;
+                    const yOffset = point.y - 25; 
+                    
+                    waveBoat.style.left = `${xPercent}%`;
+                    waveBoat.style.top = `calc(50% + ${yOffset}px)`;
+                }
+
+                let activeIndex = Math.floor(progressRatio * stages.length);
+                if (activeIndex >= stages.length) activeIndex = stages.length - 1;
+                if (activeIndex < 0) activeIndex = 0;
+
+                updateStage(activeIndex);
+            }
+        });
+
+        function updateStage(index) {
+            const data = stages[index];
+            
+            document.getElementById('timeline-era').textContent = data.era;
+            document.getElementById('impact-word').textContent = data.word;
+            document.getElementById('impact-meta').textContent = data.meta;
+            document.getElementById('story-title').textContent = data.title;
+            document.getElementById('story-text').textContent = data.text;
+
+            for (let i = 0; i < stages.length; i++) {
+                const node = document.getElementById(`node-${i}`);
+                if (node) {
+                    node.classList.toggle('active', i === index);
+                    node.classList.toggle('filled', i < index);
+                }
+            }
+        }
+
+        function scrollToStage(index) {
+            const containerTop = container.offsetTop;
+            const containerHeight = container.offsetHeight - window.innerHeight;
+            const targetScroll = containerTop + (containerHeight / (stages.length - 1)) * index;
+            window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
