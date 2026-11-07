@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Digital Twin Cockpit</title>
+    <style>
+        :root {
+            --bg: #0f172a; --card: #1e293b; --text: #f8fafc;
+            --muted: #94a3b8; --accent: #3b82f6; --ok: #10b981;
+            --warn: #f59e0b; --danger: #ef4444;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+        body { background: var(--bg); color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        /* Header & Status */
+        header { background: var(--card); padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
+        .title-group { display: flex; align-items: center; gap: 10px; }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--warn); }
+        .status-dot.online { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+        .icon-btn { background: none; border: 1px solid #475569; color: var(--text); padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+
+        /* Settings Modal (Tailscale IP & PIN) */
+        #settings-panel { display: none; background: #1e293b; padding: 16px; border-bottom: 2px solid var(--accent); }
+        .input-group { margin-bottom: 12px; }
+        .input-group label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+        .input-group input { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: white; }
+        
+        /* Chat Area */
+        #chat-container { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+        .msg { max-width: 85%; padding: 12px 14px; border-radius: 14px; line-height: 1.45; font-size: 15px; word-wrap: break-word; }
+        .msg.user { background: var(--accent); align-self: flex-end; border-bottom-right-radius: 4px; }
+        .msg.twin { background: var(--card); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid #334155; }
+
+        /* Approval Gate Box */
+        #approval-gate { display: none; margin: 0 16px 12px 16px; background: #291d12; border: 2px solid var(--warn); border-radius: 12px; padding: 14px; }
+        #approval-gate h4 { color: var(--warn); font-size: 14px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+        #approval-gate p { font-size: 13px; color: #fde68a; margin-bottom: 8px; line-height: 1.4; }
+        .gate-actions { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-approve { flex: 1; background: var(--ok); color: #052e16; font-weight: 700; border: none; padding: 10px; border-radius: 8px; cursor: pointer; }
+        .btn-deny { flex: 1; background: var(--danger); color: white; font-weight: 700; border: none; padding: 10px; border-radius: 8px; cursor: pointer; }
+
+        /* Input Bar */
+        footer { background: var(--card); padding: 12px; display: flex; gap: 8px; border-top: 1px solid #334155; }
+        #prompt-input { flex: 1; padding: 12px 14px; border-radius: 24px; border: 1px solid #475569; background: var(--bg); color: white; font-size: 15px; outline: none; }
+        #send-btn { background: var(--accent); color: white; border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 18px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="title-group">
+        <div id="status-led" class="status-dot"></div>
+        <div>
+            <strong style="font-size: 16px;">Digital Twin</strong>
+            <div id="status-text" style="font-size: 11px; color: var(--muted);">Staging-Modus (PC getrennt)</div>
+        </div>
+    </div>
+    <button class="icon-btn" onclick="toggleSettings()">⚙️ Tailscale</button>
+</header>
+
+<div id="settings-panel">
+    <div class="input-group">
+        <label>Tailscale IP & Port deines Heim-PCs (z.B. http://100.85.10.22:8000)</label>
+        <input type="text" id="server-url" placeholder="http://100.x.y.z:8000">
+    </div>
+    <div class="input-group">
+        <label>Dein Security PIN (aus der .env Datei)</label>
+        <input type="password" id="server-pin" placeholder="••••••••">
+    </div>
+    <button class="btn-approve" style="width:100%" onclick="saveSettings()">Verbindung speichern & testen</button>
+</div>
+
+<div id="chat-container">
+    <div class="msg twin">
+        🧠 <b>Digital Twin bereit.</b><br>
+        Regelwerk aktiv: <i>Human-in-the-Loop, Begründungspflicht, Pull-Prinzip.</i><br><br>
+        Du kannst die App bereits jetzt auf deinem Pixel 10 testen. Sobald du zu Hause die Tailscale-IP oben unter ⚙️ einträgst, verbinde ich mich direkt mit deinem PC.
+    </div>
+</div>
+
+<!-- VISUELLES APPROVAL GATE -->
+<div id="approval-gate">
+    <h4>🛡️ BEWILLIGUNG ERFORDERLICH: <span id="gate-agent">Agent</span></h4>
+    <p><b>Geplante Aktion:</b> <span id="gate-action"></span></p>
+    <p><b>Begründung:</b> <span id="gate-reason"></span></p>
+    <div class="gate-actions">
+        <button class="btn-approve" onclick="resolveGate(true)">✅ Bewilligen</button>
+        <button class="btn-deny" onclick="resolveGate(false)">❌ Ablehnen</button>
+    </div>
+</div>
+
+<footer>
+    <input type="text" id="prompt-input" placeholder="Sprich oder schreibe..." autocomplete="off">
+    <button id="send-btn" onclick="sendMessage()">➤</button>
+</footer>
+
+<script>
+    let currentGateId = null;
+
+    // Lade gespeicherte Verbindungsdaten auf dem Pixel 10
+    window.onload = () => {
+        document.getElementById('server-url').value = localStorage.getItem('twin_url') || '';
+        document.getElementById('server-pin').value = localStorage.getItem('twin_pin') || '';
+        checkConnection();
+    };
+
+    function toggleSettings() {
+        const p = document.getElementById('settings-panel');
+        p.style.display = p.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function saveSettings() {
+        localStorage.setItem('twin_url', document.getElementById('server-url').value.trim());
+        localStorage.setItem('twin_pin', document.getElementById('server-pin').value.trim());
+        toggleSettings();
+        checkConnection();
+    }
+
+    async function checkConnection() {
+        const url = localStorage.getItem('twin_url');
+        const pin = localStorage.getItem('twin_pin');
+        const led = document.getElementById('status-led');
+        const txt = document.getElementById('status-text');
+
+        if (!url) return;
+        try {
+            const res = await fetch(`${url}/status`, { headers: { 'X-Twin-Pin': pin } });
+            if (res.ok) {
+                const data = await res.json();
+                led.classList.add('online');
+                txt.innerText = `Verbunden | Budget: ${data.spent_chf} / ${data.limit_chf} CHF`;
+            } else {
+                throw new Error('Pin falsch');
+            }
+        } catch (e) {
+            led.classList.remove('online');
+            txt.innerText = 'Offline / Staging-Modus (PC nicht erreichbar)';
+        }
+    }
+
+    function appendMessage(role, text) {
+        const c = document.getElementById('chat-container');
+        const d = document.createElement('div');
+        d.className = `msg ${role}`;
+        d.innerHTML = text.replace(/\n/g, '<br>');
+        c.appendChild(d);
+        c.scrollTop = c.scrollHeight;
+    }
+
+    function showApprovalGate(id, agent, action, reason) {
+        currentGateId = id;
+        document.getElementById('gate-agent').innerText = agent;
+        document.getElementById('gate-action').innerText = action;
+        document.getElementById('gate-reason').innerText = reason;
+        document.getElementById('approval-gate').style.display = 'block';
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById('prompt-input');
+        const text = input.value.trim();
+        if (!text) return;
+        input.value = '';
+        appendMessage('user', text);
+
+        const url = localStorage.getItem('twin_url');
+        const pin = localStorage.getItem('twin_pin');
+
+        // Wenn noch nicht mit dem Heim-PC verbunden: Lokale Vorschau des Approval Gates zeigen
+        if (!url || !document.getElementById('status-led').classList.contains('online')) {
+            setTimeout(() => {
+                appendMessage('twin', '📡 <i>[Vorschau-Modus auf dem Pixel 10]</i> Ich habe deine Eingabe erhalten. Da dein Heim-PC noch nicht via Tailscale verbunden ist, simuliere ich dir hier das mobile Approval Gate:');
+                showApprovalGate(
+                    'DEMO-1',
+                    'Memory & Agent Orchestrator',
+                    `Speichere Eingabe "${text}" als [PRIVATE] und prüfe benötigte Sub-Agenten.`,
+                    'Ich benötige deine Freigabe, um diese Information dauerhaft in deiner lokalen twin_memory.json auf deinem Heim-PC abzulegen.'
+                );
+            }, 400);
+            return;
+        }
+
+        // Echter Call an den Heim-PC über Tailscale
+        try {
+            const res = await fetch(`${url}/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-Twin-Pin': pin },
+                body: JSON.stringify({ prompt: text })
+            });
+            const data = await res.json();
+            if (data.reply) appendMessage('twin', data.reply);
+            if (data.approval_required) {
+                const a = data.approval_required;
+                showApprovalGate(a.id, a.agent, a.action, a.reason);
+            }
+            checkConnection();
+        } catch (e) {
+            appendMessage('twin', '❌ Verbindungsfehler zum Heim-PC. Ist Tailscale aktiv?');
+        }
+    }
+
+    async function resolveGate(approved) {
+        document.getElementById('approval-gate').style.display = 'none';
+        const url = localStorage.getItem('twin_url');
+        const pin = localStorage.getItem('twin_pin');
+
+        if (currentGateId === 'DEMO-1') {
+            appendMessage('twin', approved 
+                ? '✅ <b>Freigabe im Cockpit bestätigt!</b> Genauso wirst du später vom Pixel 10 aus deine Agenten und Datenzugriffe auf dem PC bewilligen.'
+                : '❌ <b>Zugriff abgelehnt.</b> Die Aktion wurde sofort blockiert.');
+            return;
+        }
+
+        const res = await fetch(`${url}/approve`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Twin-Pin': pin },
+            body: JSON.stringify({ id: currentGateId, approved: approved })
+        });
+        const data = await res.json();
+        appendMessage('twin', data.reply);
+        checkConnection();
+    }
+
+    document.getElementById('prompt-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+</script>
+</body>
+</html>
